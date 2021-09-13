@@ -9,7 +9,12 @@ namespace NTracer.Tracer
 {
     public class TraceResult
     {
-        public ImmutableList<ThreadNode> Threads { get; set; }
+        public TraceResult(List<ThreadNode> threads)
+        {
+            this.Threads = threads;
+        }
+
+        public List<ThreadNode> Threads { get; }
     }
 
     public class ThreadNode

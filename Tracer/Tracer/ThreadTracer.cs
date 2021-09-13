@@ -52,3 +52,4 @@ namespace NTracer.Tracer
         public List<MethodInformation> MethodsInf { get; set; }
     }
 }
+
