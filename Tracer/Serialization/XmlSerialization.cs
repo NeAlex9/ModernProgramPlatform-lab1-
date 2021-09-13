@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NTracer
+namespace NTracer.Serialization
 {
-    class Serialization
+    class XmlSerialization
     {
     }
 }

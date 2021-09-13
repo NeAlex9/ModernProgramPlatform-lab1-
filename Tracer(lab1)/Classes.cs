@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NTracer;
+using NTracer.Tracer;
 
 namespace Tracer_lab1_
 {
@@ -22,7 +23,7 @@ namespace Tracer_lab1_
         public void MyMethod()
         {
             _tracer.StartTrace();
-            _boo.InnerMethod();
+           new Thread(new ThreadStart(_boo.InnerMethod)).Start();
             _tracer.StopTrace();
         }
     }

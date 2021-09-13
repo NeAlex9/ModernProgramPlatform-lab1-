@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Globalization;
 using System.Threading;
+using System.Collections.Immutable;
 
-namespace NTracer
+namespace NTracer.Tracer
 {
     public interface ITracer
     {
@@ -19,18 +14,15 @@ namespace NTracer
         void GetTraceResult();
     }
 
-    public class TraceResult
-    {
-        public TraceResult()
-        {
-
-        }
-
-        public List<ThreadInformation> ThreadsInformations { get; }
-    }
-
     public class Tracer : ITracer
     {
+        private static Object _locker;
+
+        static Tracer()
+        {
+            _locker = new object();
+        }
+
         public Tracer()
         {
             this.ThreadTracers = new List<ThreadTracer>();
@@ -44,7 +36,10 @@ namespace NTracer
             if (threadTracer == null)
             {
                 threadTracer = new ThreadTracer();
-                this.ThreadTracers.Add(threadTracer);
+                lock (_locker)
+                {
+                    this.ThreadTracers.Add(threadTracer);
+                }
             }
 
             threadTracer.StartTrace();
@@ -53,25 +48,28 @@ namespace NTracer
         public void StopTrace()
         {
             ThreadTracer threadTracer = GetNeededThreadTracer();
-             threadTracer.StopTrace();
-        }
-
-        private ThreadTracer GetNeededThreadTracer()
-        {
-            foreach (var thread in this.ThreadTracers)
-            {
-                if (thread.Infornmation.Id == Thread.CurrentThread.ManagedThreadId)
-                {
-                    return thread;
-                }
-            }
-
-            return null;
+            threadTracer.StopTrace();
         }
 
         public void GetTraceResult()
         {
 
+        }
+
+        private ThreadTracer GetNeededThreadTracer()
+        {
+            lock (_locker)
+            {
+                foreach (var thread in this.ThreadTracers)
+                {
+                    if (thread.Information.Id == Thread.CurrentThread.ManagedThreadId)
+                    {
+                        return thread;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

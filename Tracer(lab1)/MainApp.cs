@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NTracer;
+using NTracer.Tracer;
 
 namespace Tracer_lab1_
 {
@@ -17,10 +18,10 @@ namespace Tracer_lab1_
             var boo = new Boo(tracer);
             foo.MyMethod();
             boo.InnerMethod();
-            boo.InnerMethod();
-            foo.MyMethod();
-            tracer.ThreadTracers[0].Infornmation.MethodsInf = tracer.ThreadTracers[0].Infornmation.MethodsInf.OrderBy(elem => elem.MethodeId).ToList();
-            Console.ReadLine();
+            /*boo.InnerMethod();
+            foo.MyMethod();*/
+            tracer.ThreadTracers[0].Information.MethodsInf = tracer.ThreadTracers[0].Information.MethodsInf.OrderBy(elem => elem.SortedId).ToList();
+             Console.ReadLine();
         }
     }
 }
