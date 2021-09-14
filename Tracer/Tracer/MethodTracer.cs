@@ -22,20 +22,17 @@ namespace NTracer.Tracer
 
         public void StartTrace()
         {
+            StackFrame frame = new StackFrame(3);
+            var method = frame.GetMethod();
+            StartTime = DateTime.Now;
             lock (_locker)
             {
-                this.MethodInf = new MethodInformation
+                this.MethodInf = new MethodInformation(method.DeclaringType.ToString(), method.Name, )
                 {
                     SortedId = MethodTracer._methodId
                 };
                 Interlocked.Increment(ref _methodId);
             }
-
-            StackFrame frame = new StackFrame(3);
-            var method = frame.GetMethod();
-            this.MethodInf.ClassName = method.DeclaringType.ToString();
-            this.MethodInf.MethodName = method.Name;
-            StartTime = DateTime.Now;
         }
 
         public MethodInformation StopTrace()
@@ -47,14 +44,21 @@ namespace NTracer.Tracer
 
     public class MethodInformation : ISortable, ICloneable
     {
+        public MethodInformation(string className, string methodName, TimeSpan elapsedTime)
+        {
+            this.MethodName = methodName;
+            this.ClassName = className;
+            this.ElapsedTime = elapsedTime;
+        }
+
         public int SortedId
         {
             get;
             set;
         }
-        public string ClassName { get; set; }
-        public string MethodName { get; set; }
-        public TimeSpan ElapsedTime { get; set; }
+        public string ClassName { get; private set; }
+        public string MethodName { get; private set; }
+        public TimeSpan ElapsedTime { get; private set; }
         public object Clone()
         {
             var inf = new MethodInformation

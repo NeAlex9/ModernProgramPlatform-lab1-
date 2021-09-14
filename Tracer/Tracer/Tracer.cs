@@ -11,7 +11,7 @@ namespace NTracer.Tracer
 
         void StopTrace();
 
-        void GetTraceResult();
+        TraceResult GetTraceResult();
     }
 
     public class Tracer : ITracer
@@ -51,9 +51,10 @@ namespace NTracer.Tracer
             threadTracer.StopTrace();
         }
 
-        public void GetTraceResult()
+        public TraceResult GetTraceResult()
         {
-
+            var threadResult = new TraceResult();
+            return null;
         }
 
         private ThreadTracer GetNeededThreadTracer()

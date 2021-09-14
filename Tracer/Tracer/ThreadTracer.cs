@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -34,6 +35,17 @@ namespace NTracer.Tracer
             this.Information.InvokedMethods.Add(stack.GetFrame(1).GetMethod().Name);
             this.Information.MethodsInf.Add(methodInf);
         }
+
+        public TimeSpan GetTotalMethodsTime()
+        {
+            var time = new TimeSpan();
+            foreach (var methodInf in this.Information.MethodsInf)
+            {
+                time = time.Add(methodInf.ElapsedTime);
+            }
+
+            return time;
+        }
     }
 
     public class ThreadInformation
@@ -49,7 +61,7 @@ namespace NTracer.Tracer
 
         public int Id { get; }
 
-        public List<MethodInformation> MethodsInf { get; set; }
+        public List<MethodInformation> MethodsInf { get; private set; }
     }
 }
 
