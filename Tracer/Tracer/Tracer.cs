@@ -54,13 +54,16 @@ namespace NTracer.Tracer
 
         public TraceResult GetTraceResult()
         {
-            var threadResults= new List<ThreadInformation>();
-            foreach (var threadTracer in this.ThreadTracers)
+            lock(_locker)
             {
-                threadResults.Add(threadTracer.GetThreadResult());
-            }
+                var threadResults = new List<ThreadInformation>();
+                foreach (var threadTracer in this.ThreadTracers)
+                {
+                    threadResults.Add(threadTracer.GetThreadResult());
+                }
 
-            return new TraceResult(threadResults);
+                return new TraceResult(threadResults);
+            }
         }
 
         private ThreadTracer GetNeededThreadTracer()

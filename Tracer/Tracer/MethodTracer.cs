@@ -6,33 +6,26 @@ namespace NTracer.Tracer
 {
     public class MethodTracer
     {
-        public DateTime StartTime { get; private set; }
-        public DateTime StopTime { get; private set; }
+        public Stopwatch Stopwatch { get; }
+
+        public MethodTracer()
+        {
+            this.Stopwatch = new Stopwatch();
+        }
 
         public void StartTrace()
         {
-            this.StartTime = DateTime.Now;
-            /*StackFrame frame = new StackFrame(3);
-            var method = frame.GetMethod();
-            StartTime = DateTime.Now;
-            lock (_locker)
-            {
-                this.MethodInf = new MethodInformation(method.DeclaringType.ToString(), method.Name, )
-                {
-                    SortedId = MethodTracer._methodId
-                };
-                Interlocked.Increment(ref _methodId);
-            }*/
+            this.Stopwatch.Start();
         }
 
         public void StopTrace()
         {
-            this.StopTime = DateTime.Now;
+            this.Stopwatch.Stop();
         }
 
         public TimeSpan GetElapsedTime()
         {
-            return this.StopTime - this.StartTime;
+            return this.Stopwatch.Elapsed;
         }
     }
 }

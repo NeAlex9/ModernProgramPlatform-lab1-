@@ -14,10 +14,12 @@ namespace Tracer_lab1_
         public static void Main()
         {
             Tracer tracer = new Tracer();
+            var second = new Second(tracer);
+            var t1 = new Thread(new ThreadStart(second.SecondM));
+            t1.Start();
             var first = new First(tracer);
             first.FirstM();
-            /*boo.InnerMethod();
-            foo.MyMethod();*/
+            Thread.Sleep(3000);
             var res = tracer.GetTraceResult();
             Console.ReadLine();
         }
