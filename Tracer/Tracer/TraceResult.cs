@@ -24,9 +24,9 @@ namespace NTracer.Tracer
         public List<MethodInformation> MethodsInf { get; }
         public TimeSpan TotalMethodsTime { get; }
 
-        public ThreadInformation(List<MethodInformation> methodInf, TimeSpan totalMethodsTime)
+        public ThreadInformation(List<MethodInformation> methodInf, TimeSpan totalMethodsTime, int threadId)
         {
-            this.Id = Thread.CurrentThread.ManagedThreadId;
+            this.Id = threadId;
             this.MethodsInf = methodInf;
             this.TotalMethodsTime = totalMethodsTime;
         }

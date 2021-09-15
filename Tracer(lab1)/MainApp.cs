@@ -17,7 +17,8 @@ namespace Tracer_lab1_
             var first = new First(tracer);
             first.FirstM();
             /*boo.InnerMethod();
-            foo.MyMethod();*/ 
+            foo.MyMethod();*/
+            var res = tracer.GetTraceResult();
             Console.ReadLine();
         }
     }

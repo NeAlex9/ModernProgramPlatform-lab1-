@@ -8,14 +8,16 @@ namespace NTracer.Tracer
     public class ThreadTracer
     {
         public Stack<MethodTracer> MethodTracers { get; }
-        public List<MethodInformation> MethodsInformation { get; private set; }
+
+        public TreeMaker TreeMaker { get; }
+
         public int ThreadId { get; }
 
         public ThreadTracer()
         {
             this.MethodTracers = new Stack<MethodTracer>();
             this.ThreadId = Thread.CurrentThread.ManagedThreadId;
-            this.MethodsInformation = new List<MethodInformation>();
+            this.TreeMaker = new TreeMaker();
         }
 
         public void StartTrace()
@@ -37,12 +39,14 @@ namespace NTracer.Tracer
         {
             var methodTracer = this.MethodTracers.Pop();
             methodTracer.StopTrace();
-            StackFrame frame = new StackFrame(3); /// ???
+            StackFrame frame = new StackFrame(2);
             var method = frame.GetMethod();
             var methodInf = new MethodInformation(method.DeclaringType.ToString(), method.Name,
-                methodTracer.GetElapsedTime(), null/*this.MethodsInformation*/);
-            SetChildMethods(methodInf);
-            /*this.MethodsInformation.Add(methodInf);
+                methodTracer.GetElapsedTime(), new List<MethodInformation>());
+            this.TreeMaker.MethodNodes.Push(new MethodNode(this.MethodTracers.Count + 1, methodInf));
+
+            /*SetChildMethods(methodInf);
+            this.MethodsInformation.Add(methodInf);
             var methodInf = this.MethodTracers.Pop().StopTrace();
             var stack = new StackTrace();
             var methodTracer = new MethodTracer();
@@ -52,10 +56,11 @@ namespace NTracer.Tracer
 
         public ThreadInformation GetThreadResult()
         {
-            return new ThreadInformation(this.MethodsInformation, GetTotalMethodsTime());
+            var methodsTree = this.TreeMaker.GetTreeByReverseSearch();
+            return new ThreadInformation(methodsTree, GetTotalMethodsTime(methodsTree), Thread.CurrentThread.ManagedThreadId);
         }
 
-        private void SetChildMethods(MethodInformation methodParent)
+        /*private void SetChildMethods(MethodInformation methodParent)
         {
             StackFrame frame = new StackFrame(2); // ??
             var frames = new StackTrace().GetFrames();
@@ -69,12 +74,12 @@ namespace NTracer.Tracer
                 var methodsInf = new List<MethodInformation> { methodParent };
                 this.MethodsInformation = methodsInf;
             }
-        }
+        }*/
 
-        private TimeSpan GetTotalMethodsTime()
+        private TimeSpan GetTotalMethodsTime(List<MethodInformation> methodsTree)
         {
             var time = new TimeSpan();
-            /*foreach (var methodInf in this.Information.MethodsInf)
+            /*foreach (var methodInf in .MethodsInf)
             {
                 time = time.Add(methodInf.ElapsedTime);
             }*/
