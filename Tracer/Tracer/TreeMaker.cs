@@ -42,8 +42,8 @@ namespace NTracer.Tracer
         }
     }
 
-    public class MethodNode{
-
+    public class MethodNode
+    {
         public int DeepLevel { get; }
         public MethodInformation MethodInformation { get; }
 

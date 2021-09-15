@@ -10,7 +10,7 @@ namespace NTracer.Tracer
 {
     public class TraceResult
     {
-        public List<ThreadInformation> Threads { get; }
+        public IReadOnlyList<ThreadInformation> Threads { get; }
 
         public TraceResult(List<ThreadInformation> threads)
         {
@@ -21,7 +21,7 @@ namespace NTracer.Tracer
     public class ThreadInformation
     {
         public int Id { get; }
-        public List<MethodInformation> MethodsInf { get; }
+        public IReadOnlyList<MethodInformation> MethodsInf { get; }
         public TimeSpan TotalMethodsTime { get; }
 
         public ThreadInformation(List<MethodInformation> methodInf, TimeSpan totalMethodsTime, int threadId)
