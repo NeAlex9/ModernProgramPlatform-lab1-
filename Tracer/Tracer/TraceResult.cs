@@ -10,20 +10,19 @@ namespace NTracer.Tracer
 {
     public class TraceResult
     {
-        public List<ThreadNode> Threads { get; }
+        public List<ThreadInformation> Threads { get; }
 
-        public TraceResult(List<ThreadNode> threads)
+        public TraceResult(List<ThreadInformation> threads)
         {
             this.Threads = threads;
         }
-
     }
 
     public class ThreadInformation
     {
         public int Id { get; }
         public List<MethodInformation> MethodsInf { get; }
-        public TimeSpan TotalMethodsTime { get; set; }
+        public TimeSpan TotalMethodsTime { get; }
 
         public ThreadInformation(List<MethodInformation> methodInf, TimeSpan totalMethodsTime)
         {
@@ -46,6 +45,6 @@ namespace NTracer.Tracer
         public string ClassName { get; }
         public string MethodName { get; }
         public TimeSpan ElapsedTime { get; }
-        public List<MethodInformation> ChildMethods { get; }
+        public List<MethodInformation> ChildMethods { get; private set; }
     }
 }

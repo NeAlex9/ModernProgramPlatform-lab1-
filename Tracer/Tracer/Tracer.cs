@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace NTracer.Tracer
 {
@@ -53,8 +54,13 @@ namespace NTracer.Tracer
 
         public TraceResult GetTraceResult()
         {
-            var threadResult = new TraceResult();
-            return null;
+            var threadResults= new List<ThreadInformation>();
+            foreach (var threadTracer in this.ThreadTracers)
+            {
+                threadResults.Add(threadTracer.GetThreadResult());
+            }
+
+            return new TraceResult(threadResults);
         }
 
         private ThreadTracer GetNeededThreadTracer()
@@ -63,7 +69,7 @@ namespace NTracer.Tracer
             {
                 foreach (var thread in this.ThreadTracers)
                 {
-                    if (thread.Information.Id == Thread.CurrentThread.ManagedThreadId)
+                    if (thread.ThreadId == Thread.CurrentThread.ManagedThreadId)
                     {
                         return thread;
                     }

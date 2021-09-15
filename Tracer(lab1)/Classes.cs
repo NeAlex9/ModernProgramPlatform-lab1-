@@ -9,73 +9,76 @@ using NTracer.Tracer;
 
 namespace Tracer_lab1_
 {
-    public class Foo
+    public class First
     {
-        private Boo _boo;
         private ITracer _tracer;
+        private Second _second;
 
-        internal Foo(ITracer tracer)
+        internal First(ITracer tracer)
         {
             _tracer = tracer;
-            _boo = new Boo(_tracer);
+            _second = new Second(_tracer);
         }
 
-        public void MyMethod()
+        public void FirstM()
         {
             _tracer.StartTrace();
-           new Thread(new ThreadStart(_boo.InnerMethod)).Start();
+            _second.SecondM();
+            _tracer.StopTrace();    
+        }
+    }
+
+    public class Second
+    {
+        private ITracer _tracer;
+        private Third _third;
+        private Fourth _fourth;
+
+        public Second(ITracer tracer)
+        {
+            _tracer = tracer;
+            _third = new Third(_tracer);
+            _fourth = new Fourth(_tracer);
+        }
+
+        public void SecondM()
+        {
+            _tracer.StartTrace();
+            _third.ThirdM();
+            _fourth.FourthM();
             _tracer.StopTrace();
         }
     }
 
-    public class Boo
+    public class Third
     {
         private ITracer _tracer;
 
-        internal Boo(ITracer tracer)
+        internal Third(ITracer tracer)
         {
             _tracer = tracer;
         }
 
-        public void InnerMethod()
+        public void ThirdM()
         {
             _tracer.StartTrace();
             _tracer.StopTrace();
         }
     }
 
- /*   public class Bar
+    public class Fourth
     {
-        private mmm _mmm;
         private ITracer _tracer;
 
-        internal Bar(ITracer tracer)
+        internal Fourth(ITracer tracer)
         {
-            _mmm = new mmm(tracer);
             _tracer = tracer;
         }
 
-        public void InnerMethod()
+        public void FourthM()
         {
             _tracer.StartTrace();
-            new Thread(new ThreadStart(_mmm.InnerMethod));
             _tracer.StopTrace();
         }
     }
-
-    public class mmm
-    {
-        private ITracer _tracer;
-
-        internal mmm(ITracer tracer)
-        {
-            _tracer = tracer;
-        }
-
-        public void InnerMethod()
-        {
-            _tracer.StartTrace();
-            _tracer.StopTrace();
-        }
-    }*/
 }
