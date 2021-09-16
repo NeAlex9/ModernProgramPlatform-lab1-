@@ -17,7 +17,7 @@ namespace NTracer.Serialization
             JArray threadJArray = new JArray();
             foreach (var thread in traceResult.Threads)
             {
-                JObject threadJObject = GetThreadJObject(thread);
+                JObject threadJObject = GetThread(thread);
                 threadJArray.Add(threadJObject);
             }
             JObject resultJObject = new JObject
@@ -33,13 +33,19 @@ namespace NTracer.Serialization
             return stringWriter.ToString();
         }
 
-        private JObject GetPartSerializedMethod(MethodInformation methodInfo)
+        private JObject GetThread(ThreadInformation threadInfo)
         {
+            JArray methodJArray = new JArray();
+            foreach (var method in threadInfo.MethodsInf)
+            {
+                JObject methodJObject = GetSerializedMethod(method);
+                methodJArray.Add(methodJObject);
+            }
             return new JObject
             {
-                {"name", methodInfo.MethodName },
-                {"class", methodInfo.ClassName },
-                {"time", methodInfo.ElapsedTime.TotalMilliseconds.ToString() + "ms" },
+                {"id", threadInfo.Id },
+                {"time", threadInfo.TotalMethodsTime.TotalMilliseconds.ToString() + "ms" },
+                {"methods", methodJArray }
             };
         }
 
@@ -57,19 +63,13 @@ namespace NTracer.Serialization
             return methodJObject;
         }
 
-        private JObject GetThreadJObject(ThreadInformation threadInfo)
+        private JObject GetPartSerializedMethod(MethodInformation methodInfo)
         {
-            JArray methodJArray = new JArray();
-            foreach (var method in threadInfo.MethodsInf)
-            {
-                JObject methodJObject = GetSerializedMethod(method);
-                methodJArray.Add(methodJObject);
-            }
             return new JObject
             {
-                {"id", threadInfo.Id },
-                {"time", threadInfo.TotalMethodsTime.TotalMilliseconds.ToString() + "ms" },
-                {"methods", methodJArray }
+                {"name", methodInfo.MethodName },
+                {"class", methodInfo.ClassName },
+                {"time", methodInfo.ElapsedTime.TotalMilliseconds.ToString() + "ms" },
             };
         }
     }
