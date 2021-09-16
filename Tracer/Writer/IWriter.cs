@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NTracer.Serialization
+namespace NTracer.Writer
 {
-    public class XmlSerialization
+    public interface IWriter
     {
+        void Write(string text);
     }
 }

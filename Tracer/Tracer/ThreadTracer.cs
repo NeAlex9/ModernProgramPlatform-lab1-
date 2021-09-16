@@ -35,7 +35,9 @@ namespace NTracer.Tracer
             methodTracer.StopTrace();
             StackFrame frame = new StackFrame(2);
             var method = frame.GetMethod();
-            var methodInf = new MethodInformation(method.DeclaringType.ToString(), method.Name,
+            var methodClassFullName = method.DeclaringType.ToString().Split(new char[]{'.'});
+            var methodClassName = methodClassFullName[methodClassFullName.Length - 1];
+            var methodInf = new MethodInformation(methodClassName, method.Name,
                 methodTracer.GetElapsedTime(), new List<MethodInformation>());
             this.TreeMaker.MethodNodes.Push(new MethodNode(this.MethodTracers.Count + 1, methodInf));
         }

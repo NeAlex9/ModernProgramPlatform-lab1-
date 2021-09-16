@@ -7,7 +7,7 @@ using NTracer.Tracer;
 
 namespace NTracer.Serialization
 {
-    interface ISerializable
+    public interface ISerializable
     {
         string Serialize(TraceResult traceResult);
     }
