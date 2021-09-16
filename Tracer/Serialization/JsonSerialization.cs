@@ -63,7 +63,6 @@ namespace NTracer.Serialization
             foreach (var method in threadInfo.MethodsInf)
             {
                 JObject methodJObject = GetSerializedMethod(method);
-
                 methodJArray.Add(methodJObject);
             }
             return new JObject
