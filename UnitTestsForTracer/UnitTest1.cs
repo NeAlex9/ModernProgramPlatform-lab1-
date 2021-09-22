@@ -4,6 +4,7 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NTracer.Tracer;
 using NUnit.Framework;
+using Tracer_lab1_;
 using Assert = NUnit.Framework.Assert;
 
 namespace UnitTestsForTracer
@@ -11,58 +12,139 @@ namespace UnitTestsForTracer
     [TestFixture]
     public class UnitTest1
     {
-        private int _latencyInMilliseconds = 1000;
         private Tracer _tracer;
-        private delegate void MethodInvokerDelegate();
 
-        [TestCase(5, 5)]
-        //[TestCase(6, 6, Method_Without_SubMethods)]
-        public void Check_Number_Threads(int threadsCount, int result)
+        [Test]
+        public void Check_NumberThreads_WithThreads()
         {
-            Setup(threadsCount);
+            Setup();
+            var third = new Third(_tracer);
+            third.ThirdM();
+            var t1 = new Thread(new ThreadStart(third.ThirdM));
+            t1.Start();
+            t1.Join();
             var traceResult = _tracer.GetTraceResult();
-            Assert.That(traceResult.Threads.Count, Is.EqualTo(result));
+            Assert.That(traceResult.Threads.Count, Is.EqualTo(2));
         }
 
-        //public void Check_Number_Methods(int )
+        [TestCase(1000)]
+        [TestCase(2000)]
+        public void Check_Time(int time)
+        {
+            Setup();
+            int latency = 100;
+            var fifth = new Fifth(_tracer);
+            fifth.FifthM(time);
+            var traceResult = _tracer.GetTraceResult();
+            Assert.That(traceResult.Threads[0].MethodsInf[0].ElapsedTime.TotalMilliseconds, Is.AtMost(time + latency));
+        }
 
-        private void Setup(int threadsCount)
+        [Test]
+        public void Check_NumberMethods_WithMethods()
+        {
+            Setup();
+            var third = new Third(_tracer);
+            third.ThirdM();
+            var t1 = new Thread(new ThreadStart(third.ThirdM));
+            t1.Start();
+            t1.Join();
+            var traceResult = _tracer.GetTraceResult();
+            Assert.That(CountMethodsInTraceResult(traceResult), Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Check_NumberMethods_WithNestedMethodsAndThread()
+        {
+            Setup();
+            var second = new Second(_tracer);
+            second.SecondM();
+            Thread.Sleep(3000);
+            var traceResult = _tracer.GetTraceResult();
+            Assert.That(CountMethodsInTraceResult(traceResult), Is.EqualTo(4));
+        }
+
+        [Test]
+        public void Check_NumberMethods_WithComplexStructure()
+        {
+            Setup();
+            var first = new First(_tracer);
+            first.FirstM();
+            Thread.Sleep(3000);
+            var traceResult = _tracer.GetTraceResult();
+            Assert.That(CountMethodsInTraceResult(traceResult), Is.EqualTo(6));
+        }
+
+        [Test]
+        public void Check_ThreadId()
+        {
+            Setup();
+            var third = new Third(_tracer);
+            third.ThirdM();
+            var t1 = new Thread(new ThreadStart(third.ThirdM));
+            t1.Start();
+            t1.Join();
+            var traceResult = _tracer.GetTraceResult();
+            Assert.That(new int[Thread.CurrentThread.ManagedThreadId, t1.ManagedThreadId], Is.EqualTo(new int[traceResult.Threads[0].Id, traceResult.Threads[1].Id]));
+        }
+
+        [Test]
+        public void Check_ThreadMethodsNames()
+        {
+            Setup();
+            var second = new Second(_tracer);
+            var third = new Third(_tracer);
+            second.SecondM();
+            var t1 = new Thread(new ThreadStart(third.ThirdM));
+            t1.Start();
+            t1.Join();
+            var threads = _tracer.GetTraceResult().Threads;
+            var actualResult = new string[][]{ new string[] { "SecondM", "ThirdM", "FourthM" }, new string[] { "FifthM" } };
+            var currentResult = new string[][] { new string[] { threads[0].MethodsInf[0].MethodName, threads[0].MethodsInf[0].ChildMethods[0].MethodName, threads[0].MethodsInf[0].ChildMethods[1].MethodName }, new string[] { threads[1].MethodsInf[0].MethodName } };
+            Assert.That(currentResult, Is.EqualTo(actualResult));
+        }
+
+        [Test]
+        public void Check_ThreadClassNames()
+        {
+            Setup();
+            var second = new Second(_tracer);
+            var third = new Third(_tracer);
+            second.SecondM();
+            var t1 = new Thread(new ThreadStart(third.ThirdM));
+            t1.Start();
+            t1.Join();
+            var threads = _tracer.GetTraceResult().Threads;
+            var actualResult = new string[][] { new string[] { "Second", "Third", "Fourth" }, new string[] { "Fifth" } };
+            var currentResult = new string[][] { new string[] { threads[0].MethodsInf[0].ClassName, threads[0].MethodsInf[0].ChildMethods[0].ClassName, threads[0].MethodsInf[0].ChildMethods[1].ClassName }, new string[] { threads[1].MethodsInf[0].ClassName } };
+            Assert.That(currentResult, Is.EqualTo(actualResult));
+        }
+
+        private void CountMethodsInThread(IReadOnlyCollection<MethodInformation> result, ref int count)
+        {
+            if (result.Count > 0)
+            {
+                foreach (var method in result)
+                {
+                    count += 1;
+                    CountMethodsInThread(method.ChildMethods, ref count);
+                }
+            }
+        }
+
+        private int CountMethodsInTraceResult(TraceResult res)
+        {
+            int count = 0;
+            foreach (var thread in res.Threads)
+            {
+                CountMethodsInThread(thread.MethodsInf, ref count);
+            }
+
+            return count;
+        }
+
+        private void Setup()
         {
             _tracer = new Tracer();
-            var threads = new List<Thread>();
-            Run_Number_Of_Threads(threads, threadsCount);
-        }
-
-        private void Run_Number_Of_Threads(List<Thread> threads, int threadsCount)
-        {
-            for (var i = 0; i < threadsCount; i++)
-            {
-                threads.Add(new Thread(new ParameterizedThreadStart(Method_With_One_SubMethods)));
-            }
-
-            foreach (var thread in threads)
-            {
-                thread.Start(this._latencyInMilliseconds);
-            }
-
-            foreach (var thread in threads)
-            {
-                thread.Join();
-            }
-        }
-
-        private void Method_Without_SubMethods(object latency)
-        {
-            _tracer.StartTrace();
-            Thread.Sleep((int)latency);
-            _tracer.StopTrace();
-        }
-
-        private void Method_With_One_SubMethods(object latency)
-        {
-            _tracer.StartTrace();
-            Method_Without_SubMethods(latency);
-            _tracer.StopTrace();
         }
     }
 }

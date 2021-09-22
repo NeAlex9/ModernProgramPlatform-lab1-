@@ -61,6 +61,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Tracer%28lab1%29\Tracer%28lab1%29.csproj">
+      <Project>{F10D79B1-5D58-4654-8537-3F2B12A70D9C}</Project>
+      <Name>Tracer%28lab1%29</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tracer\NTracer.csproj">
       <Project>{EAF941EA-112B-4095-9A4B-F1633A99471D}</Project>
       <Name>NTracer</Name>

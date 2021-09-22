@@ -15,17 +15,18 @@ namespace Tracer_lab1_
         private Second _second;
         private Fifth _fifth;
 
-        internal First(ITracer tracer)
+        public First(ITracer tracer)
         {
             _tracer = tracer;
             _second = new Second(_tracer);
+            _fifth = new Fifth(_tracer);
             _fifth = new Fifth(_tracer);
         }
 
         public void FirstM()
         {
             _tracer.StartTrace();
-            //_fifth.FifthM();
+            _fifth.FifthM(0);
             _second.SecondM();
             _tracer.StopTrace();
         }
@@ -50,8 +51,8 @@ namespace Tracer_lab1_
         {
             _tracer.StartTrace();
             _third.ThirdM();
-            // _fourth.FourthM();
-            // new Thread(new ThreadStart(_fifth.FifthM)).Start();
+            _fourth.FourthM();
+            new Thread(new ParameterizedThreadStart(_fifth.FifthM)).Start(0);
             _tracer.StopTrace();
         }
     }
@@ -60,7 +61,7 @@ namespace Tracer_lab1_
     {
         private ITracer _tracer;
 
-        internal Third(ITracer tracer)
+        public Third(ITracer tracer)
         {
             _tracer = tracer;
         }
@@ -95,14 +96,15 @@ namespace Tracer_lab1_
     {
         private ITracer _tracer;
 
-        internal Fifth(ITracer tracer)
+        public Fifth(ITracer tracer)
         {
             _tracer = tracer;
         }
 
-        public void FifthM()
+        public void FifthM(object time)
         {
             _tracer.StartTrace();
+            Thread.Sleep((int)time);
             _tracer.StopTrace();
         }
     }

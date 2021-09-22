@@ -26,7 +26,7 @@ namespace Tracer_lab1_
             first.FirstM();
             Thread.Sleep(2000);
             var res = tracer.GetTraceResult();
-            ISerializable serialization= new XmlSerialization();
+            ISerializable serialization= new JsonSerialization();
             var json = serialization.Serialize(res);
             IWriter textWriter = new ConsoleWriter();
             textWriter.Write(json);
