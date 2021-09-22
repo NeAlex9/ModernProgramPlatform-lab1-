@@ -27,7 +27,7 @@ namespace Tracer_lab1_
             _tracer.StartTrace();
             //_fifth.FifthM();
             _second.SecondM();
-            _tracer.StopTrace();    
+            _tracer.StopTrace();
         }
     }
 
@@ -50,8 +50,8 @@ namespace Tracer_lab1_
         {
             _tracer.StartTrace();
             _third.ThirdM();
-            _fourth.FourthM();
-            new Thread(new ThreadStart(_fifth.FifthM)).Start();
+            // _fourth.FourthM();
+            // new Thread(new ThreadStart(_fifth.FifthM)).Start();
             _tracer.StopTrace();
         }
     }
@@ -86,7 +86,7 @@ namespace Tracer_lab1_
         public void FourthM()
         {
             _tracer.StartTrace();
-           // _fifth.FifthM();
+            // _fifth.FifthM();
             _tracer.StopTrace();
         }
     }

@@ -48,7 +48,7 @@ namespace NTracer.Serialization
 
             return threadXElement;
         }
-        
+
         private XElement GetSerializedMethod(MethodInformation methodInfo)
         {
             var methodXElement = GetPartSerializedMethod(methodInfo);
